@@ -1,5 +1,13 @@
 trigger:
-- main
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - README.md
+      - azure-pipelines.yml
+      - '.gitignore'
+      - '*.png'
 
 pool:
   vmImage: 'ubuntu-latest'
