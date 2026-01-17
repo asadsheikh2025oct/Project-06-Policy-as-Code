@@ -17,7 +17,7 @@ resource vault 'Microsoft.KeyVault/vaults@2023-07-01' = {
     }
     tenantId: subscription().tenantId
     accessPolicies: [] // will set via RBAC if needed, leave empty for now
-    enablePurgeProtection: false
+    enablePurgeProtection: true
   }
 }
 
