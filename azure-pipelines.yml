@@ -1,0 +1,30 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - azure-pipelines.yml
+      - '*.png'
+      - '.gitignore'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  serviceConnection: 'Azure-Lab-Connection'
+  resourceGroupName: 'rg-governance-lab'
+  location: 'ukwest'
+
+stages:
+  - stage: Validate
+    displayName: 'governance check - validate bicep aginst policy'
+    jobs:
+      - job: validateBicep
+        displayName: 'starting bicep validation'
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Run What-if validation'
+            inputs:
+              azureSubscription: $(serviceConnection)
+              
