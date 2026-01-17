@@ -32,3 +32,24 @@ stages:
             --template-file ./keyvault.bicep \
             --parameters location=$(location) \
             --result-format FullResourcePayloads
+
+- stage: Deployment
+  displayName: 'Starting Key Vault Deployment'
+  dependsOn: Validate
+  condition: succeeded()
+  jobs:
+    - job: DeployResource
+      displayName: 'Deploying resource now'
+      steps:
+      - task: AzureResourceManagerTemplateDeployment@3
+        inputs:
+          deploymentScope: 'Resource Group'
+          azureResourceManagerConnection: 'Azure-Lab-Connection'
+          subscriptionId: 'f2f1d6df-9422-48cb-abf1-0a4eb095ad4a'
+          action: 'Create Or Update Resource Group'
+          resourceGroupName: 'rg-governance-lab'
+          location: 'UK West'
+          templateLocation: 'Linked artifact'
+          csmFile: './keyvault.bicep'
+          deploymentMode: 'Incremental'
+
