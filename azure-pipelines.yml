@@ -31,4 +31,4 @@ stages:
             --resource-group $(resourceGroupName) \
             --template-file ./keyvault.bicep \
             --parameters location=$(location) \
-            --result-format ResourcePayloads
+            --result-format FullResourcePayloads
