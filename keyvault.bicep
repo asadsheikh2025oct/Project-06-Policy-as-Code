@@ -4,7 +4,7 @@
 param location string = resourceGroup().location
 
 @description('A unique name for the keyvault')
-param kvName string = 'kv-lab-${uniqueString(resourceGroup().Id)}'
+param kvName string = 'kv-lab-${uniqueString(resourceGroup().id)}'
 
 // bicep code that actually creates kv
 resource vault 'Microsoft.KeyVault/vaults@2023-07-01' = {
