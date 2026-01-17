@@ -28,15 +28,24 @@ I authored a `keyvault.bicep` file. To test the governance guardrails, I intenti
 ### Phase 3: The Validation Pipeline
 The pipeline uses a `Validate` stage to run the `What-If` command. This is critical because it triggers the Azure Resource Manager (ARM) evaluation engine without actually changing state.
 
-```yaml
-# Snippet of the validation task
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: $(serviceConnection)
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az deployment group what-if \
-        --resource-group $(resourceGroupName) \
-        --template-file ./keyvault.bicep \
-        --result-format FullResourcePayloads
+### Phase 4: Remediation & Deployment
+
+Once the pipeline successfully blocked the "illegal" Bicep code, I remediated the template by setting `enablePurgeProtection: true`. This allowed the pipeline to pass and proceed to the `Deploy` stage.
+
+---
+
+## 🔍 Lessons Learned & Troubleshooting
+
+During implementation, I encountered and resolved several real-world issues:
+
+- **Case Sensitivity in Bicep:** Resolved `Error BCP083` where I used `resourceGroup().Id` instead of the required lowercase `resourceGroup().id`.
+- **CLI Syntax Changes:** Updated the `--result-format` parameter from the deprecated `ResourcePayloads` to the current `FullResourcePayloads` to accommodate Azure CLI agent updates.
+- **Policy Latency:** Documented the 5-15 minute replication window required for new Azure Policy assignments to take effect across the control plane.
+
+## 🚀 How to Run
+
+1. Assign the "Key Vault Deletion Protection" policy to your target RG with the `Deny` effect.
+2. Configure a Service Connection in Azure DevOps using Workload Identity Federation.
+3. Push the `keyvault.bicep` and `azure-pipelines.yml` to your repo.
+4. Observe the pipeline fail on the first run (intentional violation).
+5. Fix the Bicep code and watch the CI/CD cycle complete successfully.
